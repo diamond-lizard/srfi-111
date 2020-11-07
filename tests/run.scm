@@ -22,7 +22,7 @@
 
 (import test)
 
-(import box)
+(import srfi-111)
 
 (test-group "Box Mutable"
 	(let ((tbox #f))
