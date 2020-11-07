@@ -39,8 +39,8 @@ Accessor. Returns the current value of box.
 Mutator. Changes box to hold value.
 
 The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is the same as if they were implemented with records. That is, two boxes are both eq? and eqv? iff they are the product of the same call to box and not otherwise, and while they must be equal? if they are eqv?, the converse is implementation-dependent.
-*** Implementation
-**** Here is a definition as an R7RS library:
+** Implementation
+*** Here is a definition as an R7RS library:
 #+BEGIN_SRC scheme
 (define-library (srfi 111)
   (import (scheme base))
@@ -52,8 +52,8 @@ The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is t
       box?
       (value unbox set-box!))))
 #+END_SRC
-**** The define-record-type macro will also work on R5RS Schemes that provide SRFI 9.
-**** Here is a translation into R6RS Scheme:
+*** The define-record-type macro will also work on R5RS Schemes that provide SRFI 9.
+*** Here is a translation into R6RS Scheme:
 #+BEGIN_SRC scheme
 (library (srfi :111)
   (export box box? unbox set-box!)
@@ -64,7 +64,7 @@ The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is t
     (fields
       (mutable value unbox set-box!))))
 #+END_SRC
-**** Finally, here is an implementation in pure R5RS (plus error) that depends on redefining pair?.
+*** Finally, here is an implementation in pure R5RS (plus error) that depends on redefining pair?.
 #+BEGIN_SRC scheme
 ;; Prepare to redefine pair?.
 (define %true-pair? pair?)
@@ -95,8 +95,8 @@ The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is t
   (lambda (x)
     (and (%true-pair? x) (not (box? x)))))
 #+END_SRC
-**** Note that these implementations do not support the lexical syntax.
-**** Autoboxing (optional)
+*** Note that these implementations do not support the lexical syntax.
+*** Autoboxing (optional)
 The following provisions of this SRFI are optional:
   * A procedure, whether system-provided or user-written, that expects a box as an argument but receives a non-box may, if appropriate, allocate a box itself that holds the value, thus providing autoboxing.
 
