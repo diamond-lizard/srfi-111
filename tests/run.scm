@@ -43,19 +43,4 @@
     (test-error (set-box! tbox #t)) )
 )
 
-(test-group "Box References"
-	(let ((var (void))
-        (tbox #f))
-    (test-assert (box-variable var))
-    (set! tbox (box-variable var))
-    (test-assert (box? tbox))
-    (test-assert (box-variable? tbox))
-    (test-assert (not (box-location? tbox)))
-    (test "Unbound Box" (void) (unbox tbox))
-    (set! (unbox tbox) #t)
-    (test-assert "Bound Box" (unbox tbox))
-    (test-assert "Bound Var" var)
-    (test-assert (not (box? 3))) )
-)
-
 (test-exit)
