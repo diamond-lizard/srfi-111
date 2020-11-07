@@ -34,13 +34,4 @@
     (test-assert (not (box? 3))) )
 )
 
-(test-group "Box Immutable"
-	(let ((tbox #f))
-    (test-assert (box #f #t))
-    (set! tbox (box #f #t))
-    (test-assert (box? tbox))
-    (test-assert (not (unbox tbox)))
-    (test-error (set-box! tbox #t)) )
-)
-
 (test-exit)
