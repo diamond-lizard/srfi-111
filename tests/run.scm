@@ -26,8 +26,8 @@
 
 (test-group "Box Mutable"
 	(let ((tbox #f))
-    (test-assert (make-box (void)))
-    (set! tbox (make-box (void)))
+    (test-assert (box (void)))
+    (set! tbox (box (void)))
     (test-assert (box? tbox))
     (box-set! tbox #t)
     (test-assert (box-ref tbox))
@@ -36,8 +36,8 @@
 
 (test-group "Box Immutable"
 	(let ((tbox #f))
-    (test-assert (make-box #f #t))
-    (set! tbox (make-box #f #t))
+    (test-assert (box #f #t))
+    (set! tbox (box #f #t))
     (test-assert (box? tbox))
     (test-assert (not (box-ref tbox)))
     (test-error (box-set! tbox #t)) )
@@ -46,8 +46,8 @@
 (test-group "Box References"
 	(let ((var (void))
         (tbox #f))
-    (test-assert (make-box-variable var))
-    (set! tbox (make-box-variable var))
+    (test-assert (box-variable var))
+    (set! tbox (box-variable var))
     (test-assert (box? tbox))
     (test-assert (box-variable? tbox))
     (test-assert (not (box-location? tbox)))
@@ -60,8 +60,8 @@
 
 (test-group "Box Swap"
 	(let ((tbox #f))
-    (test-assert (make-box (void)))
-    (set! tbox (make-box 0))
+    (test-assert (box (void)))
+    (set! tbox (box 0))
     (test-assert (box? tbox))
     (test 1 (box-swap! tbox + 1))
     (test 1 (box-ref tbox))
