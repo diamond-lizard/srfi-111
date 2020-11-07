@@ -99,13 +99,21 @@ The features specified in the autoboxing section of specification are based on t
 === Specification
 ==== Procedures
 The following procedures implement the box type (which is disjoint from all other Scheme types), and are exported by the (srfi 111) library (or (srfi :111) on R6RS).
-===== (box value)
+
+<procedure>(box value)</procedure>
+
 Constructor. Returns a newly allocated box initialized to value.
-===== (box? object)
+
+<procedure>(box? object)</procedure>
+
 Predicate. Returns #t if object is a box, and #f otherwise.
-===== (unbox box)
+
+<procedure>(unbox box)</procedure>
+
 Accessor. Returns the current value of box.
-===== (set-box! box value)
+
+<procedure>(set-box! box value)</procedure>
+
 Mutator. Changes box to hold value.
 
 The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is the same as if they were implemented with records. That is, two boxes are both eq? and eqv? iff they are the product of the same call to box and not otherwise, and while they must be equal? if they are eqv?, the converse is implementation-dependent.
