@@ -20,9 +20,9 @@
 ; CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
-(require-extension test)
+(import test)
 
-(require-extension box)
+(import box)
 
 (test-group "Box Mutable"
 	(let ((tbox #f))
