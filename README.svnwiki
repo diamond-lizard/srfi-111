@@ -41,7 +41,7 @@ Mutator. Changes box to hold value.
 The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is the same as if they were implemented with records. That is, two boxes are both eq? and eqv? iff they are the product of the same call to box and not otherwise, and while they must be equal? if they are eqv?, the converse is implementation-dependent.
 ** Implementation
 *** Here is a definition as an R7RS library:
-#+BEGIN_SRC scheme
+<enscript highlight="scheme">
 (define-library (srfi 111)
   (import (scheme base))
   (export box box? unbox set-box!)
@@ -51,10 +51,10 @@ The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is t
       (box value)
       box?
       (value unbox set-box!))))
-#+END_SRC
+</enscript>
 *** The define-record-type macro will also work on R5RS Schemes that provide SRFI 9.
 *** Here is a translation into R6RS Scheme:
-#+BEGIN_SRC scheme
+<enscript highlight="scheme">
 (library (srfi :111)
   (export box box? unbox set-box!)
   (import (rnrs base) (rnrs records syntactic))
@@ -63,9 +63,9 @@ The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is t
     (box-type box box?)
     (fields
       (mutable value unbox set-box!))))
-#+END_SRC
+</enscript>
 *** Finally, here is an implementation in pure R5RS (plus error) that depends on redefining pair?.
-#+BEGIN_SRC scheme
+<enscript highlight="scheme">
 ;; Prepare to redefine pair?.
 (define %true-pair? pair?)
 
@@ -94,7 +94,7 @@ The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is t
 (set! pair?
   (lambda (x)
     (and (%true-pair? x) (not (box? x)))))
-#+END_SRC
+</enscript>
 *** Note that these implementations do not support the lexical syntax.
 *** Autoboxing (optional)
 The following provisions of this SRFI are optional:
