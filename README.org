@@ -105,6 +105,7 @@ The following provisions of this SRFI are optional:
   * Calling unbox on a non-box may simply return the non-box.
 ** Author
 John Cowan
+Tests written by Kon Lovett
 Ported to Chicken Scheme 5 by Sergey Goldgaber
 ** Copyright
 Copyright (C) John Cowan 2013. All Rights Reserved.
