@@ -1,4 +1,4 @@
-== Boxes
+== SRFI-111: Boxes
 === Abstract
 Boxes are objects with a single mutable state. Several Schemes have them, sometimes called cells. A constructor, predicate, accessor, and mutator are provided.
 
