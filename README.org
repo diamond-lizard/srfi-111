@@ -1,0 +1,178 @@
+Title
+
+Boxes
+
+Author
+
+John Cowan
+
+Status
+
+This SRFI is currently in final status. Here is an explanation of each status that a SRFI can hold. To provide input on this SRFI, please send email to srfi-111@nospam
+srfi.schemers.org. To subscribe to the list, follow these instructions. You can access previous messages via the mailing list archive.
+
+  * Received: 2013-04-14
+  * Draft: 2013-04-25--2013-06-24
+  * Revised: 2013-05-18
+  * Final: 2013-05-18
+
+Abstract
+
+Boxes are objects with a single mutable state. Several Schemes have them, sometimes called cells. A constructor, predicate, accessor, and mutator are provided.
+
+Issues
+
+None in this draft.
+
+Rationale
+
+A box is a container for an object of any Scheme type, including another box. It is like a single-element vector, or half of a pair, or a direct representation of state.
+Boxes are normally used as minimal mutable storage, and can inject a controlled amount of mutability into an otherwise immutable data structure (or one that is
+conventionally treated as immutable). They can be used to implement call-by-reference semantics by passing a boxed value to a procedure and expecting the procedure to
+mutate the box before returning.
+
+Some Scheme systems use boxes to implement set!. In this transformation, known as assignment conversion, all variables that are actually mutated are initialized to boxes,
+and all set! syntax forms become calls on set-box!. Naturally, all ordinary references to those variables must become calls on unbox. By reducing all variable mutation to
+data-structure mutation in this way, such Scheme systems are free to maintain variables in multiple hardware locations, such as the stack and the heap or registers and the
+stack, without worrying about exactly when and where they are mutated.
+
+Boxes are also useful for providing an extra level of indirection, allowing more than one body of code or data structure to share a reference, or pointer, to an object. In
+this way, if any procedure mutates the box in any of the data structures, all procedures will immediately "see" the new value in all data structures containing it.
+
+Racket and Chicken provide immutable boxes, which look like boxes to box? and unbox but which cannot be mutated. They are not considered useful enough to be part of this
+SRFI. If they are provided nevertheless, the recommended constructor name is immutable-box.
+
+The following table specifies the procedure names used by the Scheme implementations that provide boxes:
+
+Proposed Racket   Gambit   SISC     Chez     Chicken      MIT                 Scheme48/scsh
+box      box      box      box      box      make-box     make-cell           make-cell
+box?     box?     box?     box?     box?     box-mutable? cell?               cell?
+unbox    unbox    unbox    unbox    unbox    box-ref      cell-contents       cell-ref
+set-box! set-box! set-box! set-box! set-box! box-set!     set-cell-contents!  cell-set!
+
+Note that Chicken also supports the procedure names defined by this SRFI in addition to its native API. Although the native API uses the standard naming pattern, for the
+purposes of this SRFI the unanimous voice of Racket, Gambit, SISC, and Chez is considered more significant.
+
+Racket, Gambit, SISC, Chez, and Chicken all support the lexical syntax #&datum to create a literal box (immutable in Racket, mutable in the other implementations).
+However, this SRFI does not. Incorporating a specifically mutable object into code makes it hard for an implementation to separate compile-time and run-time reliably, and
+it's not clear that providing them in data files provides enough benefit, as the box has to be located by tree-walking in any case. MIT Scheme and Scheme48/scsh do not
+provide a lexical syntax.
+
+The features specified in the autoboxing section of specification are based on those specified by RnRS for promises, which are analogous to immutable boxes except that
+their value is specified by code instead of data.
+
+Specification
+
+Procedures
+
+The following procedures implement the box type (which is disjoint from all other Scheme types), and are exported by the (srfi 111) library (or (srfi :111) on R6RS).
+
+(box value)
+
+Constructor. Returns a newly allocated box initialized to value.
+
+(box? object)
+
+Predicate. Returns #t if object is a box, and #f otherwise.
+
+(unbox box)
+
+Accessor. Returns the current value of box.
+
+(set-box! box value)
+
+Mutator. Changes box to hold value.
+
+The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is the same as if they were implemented with records. That is, two boxes are both eq? and eqv?
+iff they are the product of the same call to box and not otherwise, and while they must be equal? if they are eqv?, the converse is implementation-dependent.
+
+Implementation
+
+Here is a definition as an R7RS library:
+
+(define-library (srfi 111)
+  (import (scheme base))
+  (export box box? unbox set-box!)
+
+  (begin
+    (define-record-type box-type
+      (box value)
+      box?
+      (value unbox set-box!))))
+
+The define-record-type macro will also work on R5RS Schemes that provide SRFI 9.
+
+Here is a translation into R6RS Scheme:
+
+(library (srfi :111)
+  (export box box? unbox set-box!)
+  (import (rnrs base) (rnrs records syntactic))
+
+  (define-record-type
+    (box-type box box?)
+    (fields
+      (mutable value unbox set-box!))))
+
+Finally, here is an implementation in pure R5RS (plus error) that depends on redefining pair?.
+
+;; Prepare to redefine pair?.
+(define %true-pair? pair?)
+
+;; Unique object in the cdr of a pair flags it as a box.
+(define %box-flag (string-copy "box flag"))
+
+;; Predicate
+(define (box? x) (and (%true-pair? x) (eq? (cdr x) %box-flag)))
+
+;; Constructor
+(define (box x) (cons x %box-flag))
+
+;; Accessor
+(define (unbox x)
+  (if (box? x)
+    (car x)
+    (error "Attempt to unbox non-box")))
+
+;; Mutator
+(define (set-box! x y)
+  (if (box? x)
+    (set-car! x y)
+    (error "Attempt to mutate non-box")))
+
+;; Override pair?.
+(set! pair?
+  (lambda (x)
+    (and (%true-pair? x) (not (box? x)))))
+
+Note that these implementations do not support the lexical syntax.
+
+Autoboxing (optional)
+
+The following provisions of this SRFI are optional:
+
+  * A procedure, whether system-provided or user-written, that expects a box as an argument but receives a non-box may, if appropriate, allocate a box itself that holds
+    the value, thus providing autoboxing.
+
+  * A procedure that accepts arguments only of specified types (such as +) but receives a box instead may, if appropriate, unbox the box. Procedures that accept arguments
+    of any type (such as cons) must not unbox their arguments.
+
+  * Calling unbox on a non-box may simply return the non-box.
+
+Copyright
+
+Copyright (C) John Cowan 2013. All Rights Reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software
+without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Editor: Mike Sperber
+Last modified: Wed Jul 3 09:04:14 MST 2013
