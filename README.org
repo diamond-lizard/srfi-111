@@ -42,61 +42,7 @@ Mutator. Changes box to hold value.
 
 The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is the same as if they were implemented with records. That is, two boxes are both eq? and eqv? iff they are the product of the same call to box and not otherwise, and while they must be equal? if they are eqv?, the converse is implementation-dependent.
 ** Implementation
-*** Here is a definition as an R7RS library:
-#+BEGIN_SRC scheme
-(define-library (srfi 111)
-  (import (scheme base))
-  (export box box? unbox set-box!)
-
-  (begin
-    (define-record-type box-type
-      (box value)
-      box?
-      (value unbox set-box!))))
-#+END_SRC
-*** The define-record-type macro will also work on R5RS Schemes that provide SRFI 9.
-*** Here is a translation into R6RS Scheme:
-#+BEGIN_SRC scheme
-(library (srfi :111)
-  (export box box? unbox set-box!)
-  (import (rnrs base) (rnrs records syntactic))
-
-  (define-record-type
-    (box-type box box?)
-    (fields
-      (mutable value unbox set-box!))))
-#+END_SRC
-*** Finally, here is an implementation in pure R5RS (plus error) that depends on redefining pair?.
-#+BEGIN_SRC scheme
-;; Prepare to redefine pair?.
-(define %true-pair? pair?)
-
-;; Unique object in the cdr of a pair flags it as a box.
-(define %box-flag (string-copy "box flag"))
-
-;; Predicate
-(define (box? x) (and (%true-pair? x) (eq? (cdr x) %box-flag)))
-
-;; Constructor
-(define (box x) (cons x %box-flag))
-
-;; Accessor
-(define (unbox x)
-  (if (box? x)
-    (car x)
-    (error "Attempt to unbox non-box")))
-
-;; Mutator
-(define (set-box! x y)
-  (if (box? x)
-    (set-car! x y)
-    (error "Attempt to mutate non-box")))
-
-;; Override pair?.
-(set! pair?
-  (lambda (x)
-    (and (%true-pair? x) (not (box? x)))))
-#+END_SRC
+The Chicken 5 port used the R7RS reference implementation.  For details see [[https://srfi.schemers.org/srfi-111/][the original SRFI documentation]].  Version 0.1 of the Chicken port does ```not``` use the optional autoboxing (see below).
 *** Note that these implementations do not support the lexical syntax.
 *** Autoboxing (optional)
 The following provisions of this SRFI are optional:
