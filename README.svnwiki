@@ -1,7 +1,7 @@
-* Boxes
-** Abstract
+== Boxes
+=== Abstract
 Boxes are objects with a single mutable state. Several Schemes have them, sometimes called cells. A constructor, predicate, accessor, and mutator are provided.
-** Rationale
+=== Rationale
 A box is a container for an object of any Scheme type, including another box. It is like a single-element vector, or half of a pair, or a direct representation of state. Boxes are normally used as minimal mutable storage, and can inject a controlled amount of mutability into an otherwise immutable data structure (or one that is conventionally treated as immutable). They can be used to implement call-by-reference semantics by passing a boxed value to a procedure and expecting the procedure to mutate the box before returning.
 
 Some Scheme systems use boxes to implement set!. In this transformation, known as assignment conversion, all variables that are actually mutated are initialized to boxes, and all set! syntax forms become calls on set-box!. Naturally, all ordinary references to those variables must become calls on unbox. By reducing all variable mutation to data-structure mutation in this way, such Scheme systems are free to maintain variables in multiple hardware locations, such as the stack and the heap or registers and the stack, without worrying about exactly when and where they are mutated.
@@ -96,21 +96,21 @@ Note that Chicken also supports the procedure names defined by this SRFI in addi
 Racket, Gambit, SISC, Chez, and Chicken all support the lexical syntax #&datum to create a literal box (immutable in Racket, mutable in the other implementations). However, this SRFI does not. Incorporating a specifically mutable object into code makes it hard for an implementation to separate compile-time and run-time reliably, and it's not clear that providing them in data files provides enough benefit, as the box has to be located by tree-walking in any case. MIT Scheme and Scheme48/scsh do not provide a lexical syntax.
 
 The features specified in the autoboxing section of specification are based on those specified by RnRS for promises, which are analogous to immutable boxes except that their value is specified by code instead of data.
-** Specification
-*** Procedures
+=== Specification
+==== Procedures
 The following procedures implement the box type (which is disjoint from all other Scheme types), and are exported by the (srfi 111) library (or (srfi :111) on R6RS).
-**** (box value)
+===== (box value)
 Constructor. Returns a newly allocated box initialized to value.
-**** (box? object)
+===== (box? object)
 Predicate. Returns #t if object is a box, and #f otherwise.
-**** (unbox box)
+===== (unbox box)
 Accessor. Returns the current value of box.
-**** (set-box! box value)
+===== (set-box! box value)
 Mutator. Changes box to hold value.
 
 The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is the same as if they were implemented with records. That is, two boxes are both eq? and eqv? iff they are the product of the same call to box and not otherwise, and while they must be equal? if they are eqv?, the converse is implementation-dependent.
-** Implementation
-*** Here is a definition as an R7RS library:
+=== Implementation
+==== Here is a definition as an R7RS library:
 <enscript highlight="scheme">
 (define-library (srfi 111)
   (import (scheme base))
@@ -122,8 +122,8 @@ The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is t
       box?
       (value unbox set-box!))))
 </enscript>
-*** The define-record-type macro will also work on R5RS Schemes that provide SRFI 9.
-*** Here is a translation into R6RS Scheme:
+==== The define-record-type macro will also work on R5RS Schemes that provide SRFI 9.
+==== Here is a translation into R6RS Scheme:
 <enscript highlight="scheme">
 (library (srfi :111)
   (export box box? unbox set-box!)
@@ -134,7 +134,7 @@ The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is t
     (fields
       (mutable value unbox set-box!))))
 </enscript>
-*** Finally, here is an implementation in pure R5RS (plus error) that depends on redefining pair?.
+==== Finally, here is an implementation in pure R5RS (plus error) that depends on redefining pair?.
 <enscript highlight="scheme">
 ;; Prepare to redefine pair?.
 (define %true-pair? pair?)
@@ -165,19 +165,19 @@ The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is t
   (lambda (x)
     (and (%true-pair? x) (not (box? x)))))
 </enscript>
-*** Note that these implementations do not support the lexical syntax.
-*** Autoboxing (optional)
+==== Note that these implementations do not support the lexical syntax.
+==== Autoboxing (optional)
 The following provisions of this SRFI are optional:
   * A procedure, whether system-provided or user-written, that expects a box as an argument but receives a non-box may, if appropriate, allocate a box itself that holds the value, thus providing autoboxing.
 
   * A procedure that accepts arguments only of specified types (such as +) but receives a box instead may, if appropriate, unbox the box. Procedures that accept arguments of any type (such as cons) must not unbox their arguments.
 
   * Calling unbox on a non-box may simply return the non-box.
-** Author
+=== Author
 John Cowan
 Tests written by Kon Lovett
 Ported to Chicken Scheme 5 by Sergey Goldgaber
-** Copyright
+=== Copyright
 Copyright (C) John Cowan 2013. All Rights Reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -185,5 +185,5 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-** Version history
-*** 0.1 - Ported to Chicken Scheme 5
+=== Version history
+==== 0.1 - Ported to Chicken Scheme 5
