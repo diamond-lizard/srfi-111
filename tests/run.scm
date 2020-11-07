@@ -29,7 +29,7 @@
     (test-assert (box (void)))
     (set! tbox (box (void)))
     (test-assert (box? tbox))
-    (box-set! tbox #t)
+    (set-box! tbox #t)
     (test-assert (box-ref tbox))
     (test-assert (not (box? 3))) )
 )
@@ -40,7 +40,7 @@
     (set! tbox (box #f #t))
     (test-assert (box? tbox))
     (test-assert (not (box-ref tbox)))
-    (test-error (box-set! tbox #t)) )
+    (test-error (set-box! tbox #t)) )
 )
 
 (test-group "Box References"
