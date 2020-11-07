@@ -108,7 +108,7 @@ Constructor. Returns a newly allocated box initialized to value.
 
 <procedure>(box? object)</procedure>
 
-Predicate. Returns #t if object is a box, and #f otherwise.
+Predicate. Returns {{#t}} if object is a box, and {{#f}} otherwise.
 
 <procedure>(unbox box)</procedure>
 
@@ -118,7 +118,7 @@ Accessor. Returns the current value of box.
 
 Mutator. Changes box to hold value.
 
-The behavior of boxes with the equivalence predicates eq?, eqv?, and equal? is the same as if they were implemented with records. That is, two boxes are both eq? and eqv? iff they are the product of the same call to box and not otherwise, and while they must be equal? if they are eqv?, the converse is implementation-dependent.
+The behavior of boxes with the equivalence predicates {{eq?}}, {{eqv?}}, and {{equal?}} is the same as if they were implemented with records. That is, two boxes are both {{eq?}} and {{eqv?}} iff they are the product of the same call to box and not otherwise, and while they must be {{equal?}} if they are {{eqv?}}, the converse is implementation-dependent.
 === Implementation
 The Chicken 5 port used the R7RS reference implementation.  For details see [[https://srfi.schemers.org/srfi-111/|the original SRFI documentation]].  Version 0.1 of the Chicken port does ```not``` use the optional autoboxing (see below).
 ==== Note that these implementations do not support the lexical syntax.
