@@ -58,15 +58,4 @@
     (test-assert (not (box? 3))) )
 )
 
-(test-group "Box Swap"
-	(let ((tbox #f))
-    (test-assert (box (void)))
-    (set! tbox (box 0))
-    (test-assert (box? tbox))
-    (test 1 (box-swap! tbox + 1))
-    (test 1 (unbox tbox))
-    (test 2 (box-swap! tbox add1))
-    (test 2 (unbox tbox)) )
-)
-
 (test-exit)
