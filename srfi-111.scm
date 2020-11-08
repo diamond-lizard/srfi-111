@@ -1,11 +1,29 @@
-(import (only r7rs define-library))
+;;;; srfi-111.scm  -*- Scheme -*-
+;;;; Kon Lovett, Apr '20
 
-(define-library (srfi 111)
-  (import (scheme base))
-  (export box box? unbox set-box!)
+;; Issues
+;;
 
-  (begin
-    (define-record-type box-type
-      (box value)
-      box?
-      (value unbox set-box!))))
+(module srfi-111
+
+(;export
+  box box? unbox set-box!
+  immutable-box)
+
+(import scheme
+  (chicken base)
+  (only (chicken platform) register-feature!)
+  (only box-core box? make-box-mutable make-box-immutable box-ref box-set!))
+
+;;
+
+(define box           make-box-mutable)
+(define immutable-box make-box-immutable)
+(define unbox         box-ref)
+(define set-box!      box-set!)
+
+;;
+
+(register-feature! 'srfi-111)
+
+) ;module srfi-111

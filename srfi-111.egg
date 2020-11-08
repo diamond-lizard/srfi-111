@@ -1,10 +1,11 @@
 ;;; srfi-111.egg -*- Scheme -*- vim: ft=scheme:
 
-((author "John Cowan")
+((author "John Cowan and Kon Lovett")
  (maintainer "Sergey Goldgaber")
  (synopsis "SRFI-111: Boxes")
+ (version "0.2")
  (category data)
- (dependencies r7rs)
+ (dependencies box)
  (test-dependencies test)
  (license "MIT")
  (components (extension srfi-111)))
